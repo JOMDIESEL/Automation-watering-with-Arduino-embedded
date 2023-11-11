@@ -3,17 +3,17 @@
 
 #include <Wire.h>
 #include <SPI.h>  
-#include <RTClib.h>             //library เวลา
+#include <RTClib.h>             // ไลบรารีเวลา
 RTC_DS3231 RTC;
 
-#define DHT_A_PIN 3             //humidity จากขาdigital
+#define DHT_A_PIN 3             // ขาดิจิตอลสำหรับเซ็นเซอร์ความชื้น A
 #define DHT_A_TYPE DHT11   
 DHT dht1(DHT_A_PIN, DHT11);
 #define DHT_B_PIN 2 
 #define DHT_B_TYPE DHT11 
 DHT dht(DHT_B_PIN, DHT11);
 
-const int moisture_A_Pin = A0; // moisture จากขาanalog
+const int moisture_A_Pin = A0; // ขาอะนาล็อกสำหรับเซ็นเซอร์ความชื้น A
 int MoistureA;               
 const int moisture_B_Pin = A1; 
 int MoistureB; 
@@ -26,219 +26,121 @@ void setup()
   Wire.begin();
   RTC.begin(); 
    
-  pinMode (13,OUTPUT);            //กำหนดขาdigital
-  pinMode (12,OUTPUT);
-  pinMode (11,OUTPUT);
-  pinMode (10,OUTPUT);
-  pinMode (9,OUTPUT);
-  Serial.begin(9600);           // config port
-  Serial.println(F("DHT11 was Begun "));
+  pinMode(13, OUTPUT);            // กำหนดขาดิจิตอล
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, OUTPUT);
+  Serial.begin(9600);           // กำหนดค่าพอร์ต
+  Serial.println(F("DHT11 พร้อมทำงาน "));
  
    
-  RTC.adjust(DateTime(2020,4,29, 10,59,50));   //ตั้งเวลาปัจจุบันให้ปั้มทำงาน
+  RTC.adjust(DateTime(2020, 4, 29, 10, 59, 50));   // ตั้งเวลาปัจจุบันสำหรับการทำงานของปั้ม
 
   DateTime now = RTC.now();
-
   
-}  //วงเล็บvoid setup
+}  // วงเล็บ void setup
 
 void loop() 
-{                                                             //วงเล็บ void loop
+{                                                             // วงเล็บ void loop
 
- DateTime now = RTC.now();
+  DateTime now = RTC.now();
   Serial.print(now.hour());
   Serial.print(":");
   Serial.print(now.minute());
   Serial.print(":");
   Serial.println(now.second());
   
-int ldr_sensor = map(analogRead(A3),0,1023,100,0);
+  int ldr_sensor = map(analogRead(A3), 0, 1023, 100, 0);
   Serial.print(" แสง : ");
   Serial.print(ldr_sensor);
   Serial.println("%");
   
-    MoistureA = map(analogRead(moisture_A_Pin),0,1023,0,100);         //ความชื้นในดิน A
-    Serial.print("MoistureA : "); 
-    Serial.print(MoistureA); 
-    Serial.println("%");  
-    MoistureB = map(analogRead(moisture_B_Pin),0,1023,0,100);         //ความชื้นในดิน B
-    Serial.print("MoistureB : "); 
-    Serial.print(MoistureB);                  
-    Serial.println("%"); 
-    int averageMOISTURE = (MoistureA + MoistureB)/2 ;                 //ความชื้นเฉลี่ยจากกระถาง
-    Serial.print("AVERAGE MOISTURE IN SOIL : ");
-    Serial.print(averageMOISTURE);  
-     Serial.println("%");              
-   
-    
-    
-    float h1 = dht1.readHumidity();                                     //ความชื้นในบรรยากาศ ตัวที่ 1
-    float t1 = dht1.readTemperature();
-    float f1 = dht1.readTemperature(true);
-    if (isnan(h1) || isnan(t1) || isnan(f1)) 
-      {
-        Serial.println(F("Failed to read from DHT sensor!"));
-        return;
-      }
-    Serial.print(F("Humidity1: "));
-    Serial.print(h1);
-    Serial.print(F("%  Temperature: "));
-    Serial.print(t1);
-    Serial.println(F("°C "));
-    
-    float h = dht.readHumidity();                                       //ความชื้นบรรยากาศ ตัวที่ 2
-    float t = dht.readTemperature();
-    float f = dht.readTemperature(true);
-    if (isnan(h) || isnan(t) || isnan(f)) 
-      {
-        Serial.println(F("Failed to read from DHT sensor!"));
-        return;
-      }
-    Serial.print(F("Humidity2: "));
-    Serial.print(h);
-    Serial.print(F("%  Temperature: "));
-    Serial.print(t);
-    Serial.println(F("°C "));
-    float averageHUMIDITY = (h + h1)/2;                                 //ความชื้นบรรยากาศเฉลี่ย
-    Serial.print("AVERAGE HUMIDITY IN AIR : ");
-    Serial.print(averageHUMIDITY);
-     Serial.println("%");
-              
+  MoistureA = map(analogRead(moisture_A_Pin), 0, 1023, 0, 100);         // ความชื้นในดิน A
+  Serial.print("MoistureA : "); 
+  Serial.print(MoistureA); 
+  Serial.println("%");  
+  MoistureB = map(analogRead(moisture_B_Pin), 0, 1023, 0, 100);         // ความชื้นในดิน B
+  Serial.print("MoistureB : "); 
+  Serial.print(MoistureB);                  
+  Serial.println("%"); 
+  int averageMOISTURE = (MoistureA + MoistureB) / 2 ;                 // ความชื้นเฉลี่ยจากกระถาง
+  Serial.print("ความชื้นเฉลี่ยในดิน : ");
+  Serial.print(averageMOISTURE);  
+  Serial.println("%");              
 
+  float h1 = dht1.readHumidity();                                     // ความชื้นในบรรยากาศ ตัวที่ 1
+  float t1 = dht1.readTemperature();
+  float f1 = dht1.readTemperature(true);
+  if (isnan(h1) || isnan(t1) || isnan(f1)) 
+  {
+    Serial.println(F("ไม่สามารถอ่านข้อมูลจากเซ็นเซอร์ DHT!"));
+    return;
+  }
+  Serial.print(F("ความชื้น1: "));
+  Serial.print(h1);
+  Serial.print(F("%  อุณหภูมิ: "));
+  Serial.print(t1);
+  Serial.println(F("°C "));
+  
+  float h = dht.readHumidity();                                       // ความชื้นบรรยากาศ ตัวที่ 2
+  float t = dht.readTemperature();
+  float f = dht.readTemperature(true);
+  if (isnan(h) || isnan(t) || isnan(f)) 
+  {
+    Serial.println(F("ไม่สามารถอ่านข้อมูลจากเซ็นเซอร์ DHT!"));
+    return;
+  }
+  Serial.print(F("ความชื้น2: "));
+  Serial.print(h);
+  Serial.print(F("%  อุณหภูมิ: "));
+  Serial.print(t);
+  Serial.println(F("°C "));
+  float averageHUMIDITY = (h + h1) / 2;                                 // ความชื้นบรรยากาศเฉลี่ย
+  Serial.print("ความชื้นเฉลี่ยในอากาศ : ");
+  Serial.print(averageHUMIDITY);
+  Serial.println("%");
+  
+  controlWaterPumps(now.hour(), now.minute(), now.second(), averageMOISTURE);
 
-
- if (now.hour()== 6)
-        {
-          if(now.minute()<30)
-            {
-              if(now.second()==0)
-                {
-                  Serial.println("JOM is Watering.");
-                  delay(1000);
-                  digitalWrite(13,HIGH);
-                  digitalWrite(12,HIGH);
-                  digitalWrite(11,HIGH);
-                  digitalWrite(10,HIGH);
-                  digitalWrite(9,HIGH);
-                }
-            }
-          if(now.minute()==30)
-            {
-              if(now.second()==00)
-                  {
-                 Serial.println("Pump was stopped.");
-                 delay(1000);
-                 digitalWrite(13,LOW);
-                 digitalWrite(12,LOW);
-                 digitalWrite(11,LOW);
-                 digitalWrite(10,LOW);
-                 digitalWrite(9,LOW);
-                  }
-           
-            }
-        }
-        
-
-
-  else if(now.hour()>9 && now.hour() <15){
-       if(averageMOISTURE<70)
-        {
-            digitalWrite(13,HIGH); 
-            Serial.println("Water Pump A is ON");
-        } 
-      if(averageMOISTURE>=70)
-        {
-          Serial.println("Water Pump A is OFF");
-          digitalWrite(13,LOW); 
-        }
-       if(averageMOISTURE<70)
-        {
-            digitalWrite(12,HIGH); 
-            Serial.println("Water Pump B is ON");
-        } 
-      if(averageMOISTURE>=70)
-        {
-          Serial.println("Water Pump B is OFF");
-          digitalWrite(12,LOW); 
-        }
-       if(averageMOISTURE<70)
-        {
-            digitalWrite(11,HIGH); 
-            Serial.println("Water Pump C is ON");
-        } 
-      if(averageMOISTURE>=70)
-        {
-          Serial.println("Water Pump C is OFF");
-          digitalWrite(11,LOW); 
-        }
-        if(averageMOISTURE<70)
-        {
-            digitalWrite(10,HIGH); 
-            Serial.println("Water Pump D is ON");
-        } 
-      if(averageMOISTURE>=70)
-        {
-          Serial.println("Water Pump D is OFF");
-          digitalWrite(10,LOW); 
-        }
-        if(averageMOISTURE<70)
-        {
-            digitalWrite(9,HIGH); 
-            Serial.println("Water Pump E is ON");
-        } 
-      if(averageMOISTURE>=70)
-        {
-          Serial.println("Water Pump E is OFF");
-          digitalWrite(9,LOW); 
-        }
-
-  } 
-
-
-else if (now.hour()== 16)
-        {
-          if(now.minute()<30)
-            {
-              if(now.second()==0)
-              {
-                Serial.println("Watering");
-                delay(1000);
-                digitalWrite(13,HIGH);
-                digitalWrite(12,HIGH);
-                digitalWrite(11,HIGH);
-                digitalWrite(10,HIGH);
-                digitalWrite(9,HIGH);
-              }
-            }
-          if(now.minute()==30)
-            {
-            if(now.second()==00)
-                {
-               Serial.println("Stopping");
-               delay(1000);
-               digitalWrite(13,LOW);
-               digitalWrite(12,LOW);
-               digitalWrite(11,LOW);
-               digitalWrite(10,LOW);
-               digitalWrite(9,LOW);
-                }
-           
-            }
-        }
-   
- 
-else{
-      digitalWrite(13,LOW);
-      digitalWrite(12,LOW);
-      digitalWrite(11,LOW);
-      digitalWrite(10,LOW);
-      digitalWrite(9,LOW);
-      Serial.println("Water Pump A is OFF");
-      Serial.println("Water Pump B is OFF");
-      Serial.println("Water Pump C is OFF");
-      Serial.println("Water Pump D is OFF");
-      Serial.println("Water Pump E is OFF");
-  }    
-    
   delay(1000);
 }
+
+void controlWaterPumps(int hour, int minute, int second, int averageMoisture) {
+  if (hour == 6)
+  {
+    if (minute < 30 && second == 0)
+    {
+      startWatering();
+    }
+    if (minute == 30 && second == 0)
+    {
+      stopWatering();
+    }
+  }
+  else if (hour > 9 && hour < 15)
+  {
+    controlWaterPump(13, "A", averageMoisture);
+    controlWaterPump(12, "B", averageMoisture);
+    controlWaterPump(11, "C", averageMoisture);
+    controlWaterPump(10, "D", averageMoisture);
+    controlWaterPump(9, "E", averageMoisture);
+  }
+  else if (hour == 16)
+  {
+    if (minute < 30 && second == 0)
+    {
+      startWatering();
+    }
+    if (minute == 30 && second == 0)
+    {
+      stopWatering();
+    }
+  }
+  else
+  {
+    stopAllWaterPumps();
+  }
+}
+
+void controlWaterP
